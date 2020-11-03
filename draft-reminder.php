@@ -12,6 +12,8 @@
 
 namespace DraftReminder;
 
+include_once plugin_dir_path( __FILE__ ) . '/includes/options-page.php';
+
 add_action( 'sender', 'send_email' );
 
 function activation() {
