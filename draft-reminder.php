@@ -10,21 +10,23 @@
  * @package         Draft_Reminder
  */
 
-add_action( 'draftreminder_sender', 'draftreminder_send_email' );
+namespace DraftReminder;
 
-function draftreminder_activation() {
-    wp_schedule_event( time(), 'weekly', 'draftreminder_sender' );
+add_action( 'sender', 'send_email' );
+
+function activation() {
+    wp_schedule_event( time(), 'weekly', 'sender' );
 }
 
-register_activation_hook( __FILE__, 'draftreminder_activation' );
+register_activation_hook( __FILE__, 'activation' );
 
-function draftreminder_deactivation() {
-    wp_clear_scheduled_hook( 'draftreminder_sender' );
+function deactivation() {
+    wp_clear_scheduled_hook( 'sender' );
 }
 
-register_deactivation_hook( __FILE__, 'draftreminder_deactivation' );
+register_deactivation_hook( __FILE__, 'deactivation' );
 
-function draftreminder_get_drafts() {
+function get_drafts() {
 
 	$drafts = new WP_Query(
 		array(
@@ -55,9 +57,9 @@ function draftreminder_get_drafts() {
 	return $drafts_data;
 }
 
-function draftreminder_send_email() {
+function send_email() {
 
-	$drafts = draftreminder_get_drafts();
+	$drafts = get_drafts();
 	$email_subject = 'The subject';
 	$email_headers = array('Content-Type: text/html; charset=UTF-8');
 
