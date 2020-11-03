@@ -10,29 +10,27 @@
  * @package         Draft_Reminder
  */
 
-namespace DraftReminder;
-
 include_once plugin_dir_path( __FILE__ ) . '/includes/options-page.php';
 
 add_action( 'sender', 'send_email' );
 
-function activation() {
+function draftreminder_activation() {
     wp_schedule_event( time(), 'weekly', 'sender' );
 }
 
-register_activation_hook( __FILE__, 'activation' );
+register_activation_hook( __FILE__, 'draftreminder_activation' );
 
-function deactivation() {
+function draftreminder_deactivation() {
     wp_clear_scheduled_hook( 'sender' );
 }
 
-register_deactivation_hook( __FILE__, 'deactivation' );
+register_deactivation_hook( __FILE__, 'draftreminder_deactivation' );
 
 function get_drafts() {
 
 	$drafts = new WP_Query(
 		array(
-			'posts_per_page' => 50,
+			'posts_per_page' => get_option('draftreminder_posts_total', 50),
 			'post_status'	=> 'draft',
 			'order' => 'ASC',
 			'orderby' => 'date',

@@ -6,7 +6,19 @@ function register_options() {
 		'general',
 		'draftreminder_posts_total',
 		[
-			'sanitize_callback' => 'intval',
+			'sanitize_callback' => function ($value) {
+				if ($value < 1 || $value > 200) {
+					add_settings_error(
+						'draftreminder_posts_total',
+						'less_than_one',
+						'The total of posts for Draft Reminder needs to be more than 1 and less than 200.',
+						'error'
+					);
+					return get_option('draftreminder_posts_total');
+				}
+
+				return $value;
+			},
 		]
 	);
 
@@ -14,7 +26,7 @@ function register_options() {
 		'draftreminder_posts_total',
 		'Posts total',
 		function ($args) {
-			$value = get_option('draftreminder_posts_total');
+			$value = get_option('draftreminder_posts_total', 50);
 			?>
 			<input type="number" name="draftreminder_posts_total" id="<?php echo $args['label_for']; ?>" value="<?php echo $value; ?>">
 			<?php
