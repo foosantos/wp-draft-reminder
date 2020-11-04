@@ -1,16 +1,36 @@
 <?php
 
+function draftreminder_options_page_html() {
+	?>
+	<h1>Draft Reminder Options</h1>
+	<form action="options.php" method="post">
+		<?php settings_fields('draftreminder_options') ?>
+		<?php do_settings_sections('draftreminder_options') ?>
+		<?php submit_button(); ?>
+	</form>
+
+	<?php
+}
+
+function draftreminder_options_page() {
+
+add_options_page( 'Draft Reminder Options', 'Draft Reminder', 'manage_options', 'draft-reminder','draftreminder_options_page_html' );
+
+}
+
+add_action( 'admin_menu', 'draftreminder_options_page' );
+
 function register_options() {
 
 	register_setting(
-		'general',
+		'draftreminder_options',
 		'draftreminder_posts_total',
 		[
 			'sanitize_callback' => function ($value) {
 				if ($value < 1 || $value > 200) {
 					add_settings_error(
 						'draftreminder_posts_total',
-						'less_than_one',
+						'invalid_value',
 						'The total of posts for Draft Reminder needs to be more than 1 and less than 200.',
 						'error'
 					);
@@ -20,6 +40,13 @@ function register_options() {
 				return $value;
 			},
 		]
+	);
+
+	add_settings_section(
+		'draftreminder_options_section',
+		'',
+		function () {},
+		'draftreminder_options'
 	);
 
 	add_settings_field(
@@ -32,8 +59,8 @@ function register_options() {
 			<?php
 			error_log( print_r($args, true) );
 		},
-		'general',
-		'default',
+		'draftreminder_options',
+		'draftreminder_options_section',
 		[
 			'label_for' => 'draftreminder_posts_total',
 			'class' => 'draftreminder draftreminder_posts_total'
