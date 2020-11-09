@@ -1,5 +1,29 @@
 <?php
 
+/**
+ * Create the option page.
+ * Hook: admin_menu
+ *
+ * @return void
+ */
+function draftreminder_options_page() {
+
+	add_options_page(
+		'Draft Reminder Options',
+		'Draft Reminder',
+		'manage_options',
+		'draft-reminder',
+		'draftreminder_options_page_html'
+	);
+
+}
+add_action( 'admin_menu', 'draftreminder_options_page' );
+
+/**
+ * Create the option page HTML.
+ *
+ * @return void
+ */
 function draftreminder_options_page_html() {
 	?>
 	<h1>Draft Reminder Options</h1>
@@ -8,18 +32,15 @@ function draftreminder_options_page_html() {
 		<?php do_settings_sections('draftreminder_options') ?>
 		<?php submit_button(); ?>
 	</form>
-
 	<?php
 }
 
-function draftreminder_options_page() {
-
-add_options_page( 'Draft Reminder Options', 'Draft Reminder', 'manage_options', 'draft-reminder','draftreminder_options_page_html' );
-
-}
-
-add_action( 'admin_menu', 'draftreminder_options_page' );
-
+/**
+ * Registering the plugin options.
+ * Hook: admin_init
+ *
+ * @return void
+ */
 function register_options() {
 
 	register_setting(
@@ -42,12 +63,16 @@ function register_options() {
 		]
 	);
 
-	add_settings_section(
-		'draftreminder_options_section',
-		'',
-		function () {},
-		'draftreminder_options'
-	);
+}
+add_action( 'admin_init', 'register_options');
+
+/**
+ * Show the options for the plugin.
+ * Hook: admin_init
+ *
+ * @return void
+ */
+function show_options() {
 
 	add_settings_field(
 		'draftreminder_posts_total',
@@ -68,7 +93,20 @@ function register_options() {
 	);
 
 }
+add_action( 'admin_init', 'show_options');
 
-
-add_action( 'admin_init', 'register_options');
-
+/**
+ * Creates the section for the option page.
+ * Hook: admin_init
+ *
+ * @return void
+ */
+function section_creation(){
+	add_settings_section(
+		'draftreminder_options_section',
+		'',
+		function () {},
+		'draftreminder_options'
+	);
+}
+add_action( 'admin_init', 'section_creation' );
