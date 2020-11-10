@@ -26,12 +26,14 @@ add_action( 'admin_menu', 'draftreminder_options_page' );
  */
 function draftreminder_options_page_html() {
 	?>
-	<h1>Draft Reminder Options</h1>
-	<form action="options.php" method="post">
-		<?php settings_fields('draftreminder_options') ?>
-		<?php do_settings_sections('draftreminder_options') ?>
-		<?php submit_button(); ?>
-	</form>
+	<div class="wrap">
+		<h1>Draft Reminder Options</h1>
+		<form action="options.php" method="post">
+			<?php settings_fields('draftreminder_options') ?>
+			<?php do_settings_sections('draftreminder_options') ?>
+			<?php submit_button(); ?>
+		</form>
+	</div>
 	<?php
 }
 
