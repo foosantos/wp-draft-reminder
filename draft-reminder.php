@@ -34,7 +34,7 @@ function get_drafts() {
 			'post_status'	=> 'draft',
 			'order' => 'ASC',
 			'orderby' => 'date',
-			'post_type' => 'post'
+			'post_type' => get_option( 'draftreminder_post_types', ['post'])
 		)
 	);
 

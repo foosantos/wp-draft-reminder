@@ -47,6 +47,7 @@ function register_options() {
 		'draftreminder_options',
 		'draftreminder_posts_total',
 		[
+			'type' => 'number',
 			'sanitize_callback' => function ($value) {
 				if ($value < 1 || $value > 200) {
 					add_settings_error(
@@ -63,6 +64,17 @@ function register_options() {
 		]
 	);
 
+	register_setting(
+		'draftreminder_options',
+		'draftreminder_post_types',
+		[
+			'type' => 'array',
+			'sanitize_callback' => function($value) {
+				error_log($value);
+				return $value;
+			}
+		]
+	);
 }
 add_action( 'admin_init', 'register_options');
 
@@ -74,6 +86,7 @@ add_action( 'admin_init', 'register_options');
  */
 function show_options() {
 
+	// Show Post Total field
 	add_settings_field(
 		'draftreminder_posts_total',
 		'Posts total',
@@ -92,6 +105,40 @@ function show_options() {
 		]
 	);
 
+	// Show Post Type field
+	add_settings_field(
+		'draftreminder_post_types',
+		'Post Types',
+		function ($args) {
+			$custom_post_types = get_post_types(
+				[
+					'public'   => true,
+					'_builtin' => false
+				]
+			);
+			$native_post_types = [
+				'post' => 'post',
+				'page' => 'page'
+			];
+			$post_types = array_merge($native_post_types, $custom_post_types);
+			$post_types_selected = get_option( 'draftreminder_post_types', ['post'] );
+			foreach($post_types as $option) {
+				if (in_array($option , $post_types_selected)) {
+					$checked = 'checked';
+				} else {
+					$checked = '';
+				}
+				?>
+				<div class="draftreminder_post_types_options">
+					<input type="checkbox" id="<?php echo $option ?>" name="draftreminder_post_types[]" value="<?php echo $option ?>"<?php echo $checked ?>>
+					<label for="<?php echo $option ?>"><?php echo $option ?></label>
+				</div>
+				<?php
+			}
+		},
+		'draftreminder_options',
+		'draftreminder_options_section'
+	);
 }
 add_action( 'admin_init', 'show_options');
 
