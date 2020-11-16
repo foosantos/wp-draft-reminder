@@ -72,11 +72,32 @@ function register_options() {
 		[
 			'type' => 'array',
 			'sanitize_callback' => function($value) {
-				error_log($value);
 				return $value;
 			}
 		]
 	);
+
+	register_setting(
+		'draftreminder_options',
+		'draftreminder_day_of_the_week',
+		[
+			'type' => 'string',
+			'sanitize_callback' => function ($value) {
+				$days_of_the_week = get_days_of_the_week();
+				if ( key_exists( $value , $days_of_the_week ) ) {
+					return $value;
+				} else {
+					add_settings_error(
+						'draftreminder_day_of_the_week',
+						'invalid_value',
+						'The value is not valid.',
+						'error'
+					);
+				}
+			},
+		]
+	);
+
 }
 add_action( 'admin_init', 'register_options');
 
@@ -97,7 +118,6 @@ function show_options() {
 			?>
 			<input type="number" name="draftreminder_posts_total" id="<?php echo $args['label_for']; ?>" value="<?php echo $value; ?>">
 			<?php
-			error_log( print_r($args, true) );
 		},
 		'draftreminder_options',
 		'draftreminder_options_section',
@@ -125,11 +145,8 @@ function show_options() {
 			$post_types = array_merge($native_post_types, $custom_post_types);
 			$post_types_selected = get_option( 'draftreminder_post_types', ['post'] );
 			foreach($post_types as $option) {
-				if (in_array($option , $post_types_selected)) {
-					$checked = 'checked';
-				} else {
-					$checked = '';
-				}
+				$checked = in_array($option , $post_types_selected) ? 'checked' : '' ;
+
 				?>
 				<div class="draftreminder_post_types_options">
 					<input type="checkbox" id="<?php echo $option ?>" name="draftreminder_post_types[]" value="<?php echo $option ?>"<?php echo $checked ?>>
@@ -137,6 +154,26 @@ function show_options() {
 				</div>
 				<?php
 			}
+		},
+		'draftreminder_options',
+		'draftreminder_options_section'
+	);
+
+
+	// Show Day of the week field
+	add_settings_field(
+		'draftreminder_day_of_the_week',
+		'Day of the week',
+		function ($args) {
+			$days_of_the_week = get_days_of_the_week();
+			$selected_day = get_option( 'draftreminder_day_of_the_week' );
+			?>
+				<select name="draftreminder_day_of_the_week" id="draftreminder_day_of_the_week">
+					<?php foreach($days_of_the_week as $key => $value  ) { ?>
+						<option value="<?php echo $key; ?>" <?php selected( $key , $selected_day ) ?>><?php echo $value; ?></option>
+					<?php } ?>
+				</select>
+			<?php
 		},
 		'draftreminder_options',
 		'draftreminder_options_section'
