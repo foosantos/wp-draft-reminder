@@ -12,6 +12,8 @@
 
 include_once plugin_dir_path( __FILE__ ) . '/includes/options-page.php';
 
+include_once plugin_dir_path( __FILE__ ) . '/includes/helpers.php';
+
 add_action( 'sender', 'send_email' );
 
 function draftreminder_activation() {
