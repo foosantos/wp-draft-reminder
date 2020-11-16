@@ -5,14 +5,14 @@
  *
  * @return array
  */
-function get_week_days() {
+function get_days_of_the_week() {
 	return [
-		'Sunday',
-		'Monday',
-		'Tuesday',
-		'Wednesday',
-		'Thursday',
-		'Friday',
-		'Saturday'
+		'sunday' => __('Sunday'),
+		'monday' => __('Monday'),
+		'tuesday' => __('Tuesday'),
+		'wednesday' => __('Wednesday'),
+		'thursday' => __('Thursday'),
+		'friday' => __('Friday'),
+		'saturday' => __('Saturday')
 	];
 }
