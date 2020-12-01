@@ -70,11 +70,10 @@ function get_drafts() {
 function send_email() {
 
 	$drafts = get_drafts();
-	$email_subject = 'The subject';
 	$email_headers = array('Content-Type: text/html; charset=UTF-8');
 
 	foreach ($drafts as $author_id => $posts) {
-
+		$email_subject = apply_filters( 'draftreminder_email_subject', 'Your draft reminder is here!' , $author_id );
 		$email_to = get_the_author_meta( 'user_email', $author_id );
 		ob_start();
 
