@@ -14,7 +14,13 @@ include_once plugin_dir_path( __FILE__ ) . '/includes/options-page.php';
 
 include_once plugin_dir_path( __FILE__ ) . '/includes/helpers.php';
 
-add_action( 'sender', 'send_email' );
+/**
+ * Load plugin textdomain.
+ */
+function draftreminder_load_textdomain() {
+  load_plugin_textdomain( 'draft-reminder', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+}
+add_action( 'init', 'draftreminder_load_textdomain' );
 
 function draftreminder_activation() {
     wp_schedule_event( time(), 'weekly', 'sender' );
@@ -27,6 +33,8 @@ function draftreminder_deactivation() {
 }
 
 register_deactivation_hook( __FILE__, 'draftreminder_deactivation' );
+
+add_action( 'sender', 'send_email' );
 
 function get_drafts() {
 
@@ -68,17 +76,12 @@ function send_email() {
 	foreach ($drafts as $author_id => $posts) {
 
 		$email_to = get_the_author_meta( 'user_email', $author_id );
-		$email_body = 'Hey there,<br><br>';
-		$email_body .= '<ul>';
+		ob_start();
 
-		foreach ($posts as $post_id => $post_meta) {
+		include_once plugin_dir_path( __FILE__ ) . '/templates/emails/send-reminder-email.php';
+		$email_body = ob_get_contents();
 
-			$email_body .= '<li>' . $post_meta['title'] . '</li>';
-
-		}
-
-		$email_body .= '</ul>';
-
+		ob_end_clean();
 		wp_mail( $email_to, $email_subject, $email_body, $email_headers );
 
 	}
